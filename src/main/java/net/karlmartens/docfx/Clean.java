@@ -58,7 +58,7 @@ public class Clean extends DocfxDefaultTask {
 
         List<String> includes  = apis
                 .stream()
-                .map(p -> p.resolve("**/*.yml").toString())
+                .map(p -> p.resolve("*.yml").toString())
                 .collect(Collectors.toList());
 
         String baseDir = directoryName(configFile.getPath());
