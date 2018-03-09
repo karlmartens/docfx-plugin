@@ -8,7 +8,11 @@ import java.nio.file.Paths;
 public class DocfxExtension {
 
     private String _docsHome = null;
-    private String _docsSrc = "./docs/docfx.json";
+    private String _source;
+
+    public DocfxExtension() {
+        _docsHome = System.getenv("DOCFX_HOME");
+    }
 
     public String getDocsHome() {
         return _docsHome;
@@ -16,6 +20,14 @@ public class DocfxExtension {
 
     public void setDocsHome(String path) {
         _docsHome = path;
+    }
+
+    public String getSource() {
+        return _source;
+    }
+
+    public void setSource(String src) {
+        _source = src;
     }
 
     public String getDocsExecutable() {
@@ -28,14 +40,6 @@ public class DocfxExtension {
 
         Path path = Paths.get(_docsHome, executable);
         return path.toString();
-    }
-
-    public String getDocsSrc() {
-        return _docsSrc;
-    }
-
-    public void setDocsSrc(String src) {
-        _docsSrc = src;
     }
 
 }
