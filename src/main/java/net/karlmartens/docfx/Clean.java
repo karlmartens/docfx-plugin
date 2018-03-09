@@ -72,15 +72,13 @@ public class Clean extends DocfxDefaultTask {
         ObjectReader reader = mapper.reader();
         try (FileInputStream in = new FileInputStream(configFile)) {
             JsonNode result = reader.readTree(in);
-
             if (result.has("build")) {
                 JsonNode build = result.findValue("build");
                 if (build.has("dest")) {
                     return Paths.get(build.findValue("dest").asText());
                 }
-
-                return Paths.get("_site");
             }
+            return Paths.get("_site");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
