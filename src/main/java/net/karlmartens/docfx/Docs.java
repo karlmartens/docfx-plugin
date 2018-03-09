@@ -6,6 +6,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Docs extends DocfxDefaultTask {
 
@@ -19,6 +20,7 @@ public class Docs extends DocfxDefaultTask {
             return;
         }
 
+        LOGGER.quiet(String.format(Locale.US, "Processing '%s'", source));
         doMetadata();
         doBuild();
     }

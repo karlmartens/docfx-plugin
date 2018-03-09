@@ -3,6 +3,8 @@ package net.karlmartens.docfx;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -13,11 +15,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Clean extends DocfxDefaultTask {
 
+    private static final Logger LOGGER = Logging.getLogger(Clean.class);
 
     @TaskAction
     void exec() {
@@ -58,8 +62,12 @@ public class Clean extends DocfxDefaultTask {
 
         List<String> includes  = apis
                 .stream()
-                .map(p -> p.resolve("*.yml").toString())
+                .map(p -> p.toString() + File.pathSeparator + "*.yml")
                 .collect(Collectors.toList());
+
+        for (String include : includes) {
+            LOGGER.quiet(String.format(Locale.US, "Deleting '%s'.", include));
+        }
 
         String baseDir = directoryName(configFile.getPath());
         getProject().fileTree(baseDir, t -> {
@@ -86,6 +94,7 @@ public class Clean extends DocfxDefaultTask {
 
     private void cleanBuild(File configFile) {
         Path path = parseBuild(configFile);
+        LOGGER.quiet(String.format(Locale.US, "Deleting '%s'.", path.toString()));
         Path baseDir = Paths.get(directoryName(configFile.getPath()));
         getProject().delete(baseDir.resolve(path).toString());
     }
