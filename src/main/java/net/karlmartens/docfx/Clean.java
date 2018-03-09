@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskAction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,27 +35,31 @@ public class Clean extends DocfxDefaultTask {
         cleanBuild(configFile);
     }
 
-    private List<Path> parseMetadata(File file) {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectReader reader = mapper.reader();
+    private static List<Path> parseMetadata(File file) {
         try (FileInputStream in = new FileInputStream(file)) {
-            JsonNode result = reader.readTree(in);
-
-            List<Path> paths = new ArrayList<>();
-            if (result.has("metadata")) {
-                List<JsonNode> metadatas = result.findValues("metadata");
-                for (JsonNode metadata : metadatas) {
-                    Path path = Paths.get("api");
-                    if (metadata.has("dest")) {
-                        path = Paths.get(metadata.findValue("dest").asText());
-                    }
-                    paths.add(path);
-                }
-            }
-            return paths;
+            return parseMetadata(in);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public static List<Path> parseMetadata(InputStream in) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectReader reader = mapper.reader();
+        JsonNode result = reader.readTree(in);
+
+        List<Path> paths = new ArrayList<>();
+        if (result.has("metadata")) {
+            JsonNode metadatas = result.get("metadata");
+            metadatas.forEach(metadata -> {
+                Path path = Paths.get("api");
+                if (metadata.has("dest")) {
+                    path = Paths.get(metadata.get("dest").asText());
+                }
+                paths.add(path);
+            });
+        }
+        return paths;
     }
 
     private void cleanMetadata(File configFile) {
@@ -75,21 +80,25 @@ public class Clean extends DocfxDefaultTask {
         }).forEach(File::delete);
     }
 
-    private Path parseBuild(File configFile) {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectReader reader = mapper.reader();
+    private static Path parseBuild(File configFile) {
         try (FileInputStream in = new FileInputStream(configFile)) {
-            JsonNode result = reader.readTree(in);
-            if (result.has("build")) {
-                JsonNode build = result.findValue("build");
-                if (build.has("dest")) {
-                    return Paths.get(build.findValue("dest").asText());
-                }
-            }
-            return Paths.get("_site");
+            return parseBuild(in);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public static Path parseBuild(InputStream in) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectReader reader = mapper.reader();
+        JsonNode result = reader.readTree(in);
+        if (result.has("build")) {
+            JsonNode build = result.get("build");
+            if (build.has("dest")) {
+                return Paths.get(build.get("dest").asText());
+            }
+        }
+        return Paths.get("_site");
     }
 
     private void cleanBuild(File configFile) {
