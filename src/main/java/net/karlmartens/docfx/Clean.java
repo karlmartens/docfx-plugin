@@ -62,7 +62,7 @@ public class Clean extends DocfxDefaultTask {
 
         List<String> includes  = apis
                 .stream()
-                .map(p -> p.toString() + File.pathSeparator + "*.yml")
+                .map(p -> p.toString() + File.separator + "*.yml")
                 .collect(Collectors.toList());
 
         for (String include : includes) {
