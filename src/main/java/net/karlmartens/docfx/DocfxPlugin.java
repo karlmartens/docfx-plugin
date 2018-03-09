@@ -1,9 +1,7 @@
-package net.karlmartens.dotnet;
+package net.karlmartens.docfx;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-
-import java.util.Arrays;
 
 public class DocfxPlugin implements Plugin<Project> {
 

@@ -1,4 +1,4 @@
-package net.karlmartens.dotnet;
+package net.karlmartens.docfx;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Internal;
